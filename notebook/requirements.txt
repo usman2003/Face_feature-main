@@ -1,0 +1,9 @@
+wandb
+omegaconf
+torch
+pytorch_fid
+piq
+einops
+timm
+pyfacer
+Pillow
