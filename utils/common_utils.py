@@ -4,27 +4,17 @@ from torch.nn import functional as F
 from PIL import Image
 
 
-def tensor2im(tensor):
-    # Ensure tensor is detached and moved to CPU
-    array = tensor.cpu().detach().numpy()
-    print(f"Initial shape (C, H, W): {array.shape}")
-
-    # Transpose from (C, H, W) to (H, W, C)
-    array = np.transpose(array, (1, 2, 0))
-    print(f"Transposed shape (H, W, C): {array.shape}")
-
-    # Normalize to range [0, 1]
-    array = (array + 1) / 2
-    array = np.clip(array, 0, 1)
-    print(f"Clipped array: min={array.min()}, max={array.max()}")
-
-    # Convert to range [0, 255]
-    array = (array * 255).astype(np.uint8)
-    print(f"Final shape and type: {array.shape}, {array.dtype}")
-
-    # Convert to PIL Image
-    return Image.fromarray(array)
-
+def tensor2im(var):
+    var_np = var.cpu().detach().numpy()  # Ensure tensor is detached and in numpy array format
+    var_np = np.transpose(var_np, (1, 2, 0))  # Transpose to (H, W, C) format if necessary
+    var_np = (var_np * 255).astype(np.uint8)  # Scale to [0, 255] and convert to uint8
+    
+    try:
+        img = Image.fromarray(var_np)
+        return img
+    except Exception as e:
+        print(f"Error converting array to PIL Image: {e}")
+        return None
 
 def tensor2im_no_tfm(var):
     var = var.cpu().detach().transpose(0, 2).transpose(0, 1).numpy()
